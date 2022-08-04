@@ -5,21 +5,21 @@ import {
   BlockTune as IBlockTune,
   SanitizerConfig,
   ToolConfig,
-  ToolboxConfigEntry
-} from '../../../types';
+  ToolboxConfigEntry,
+} from "../../../types";
 
-import { SavedData } from '../../../types/data-formats';
-import $ from '../dom';
-import * as _ from '../utils';
-import ApiModules from '../modules/api';
-import BlockAPI from './api';
-import SelectionUtils from '../selection';
-import BlockTool from '../tools/block';
+import { SavedData } from "../../../types/data-formats";
+import $ from "../dom";
+import * as _ from "../utils";
+import ApiModules from "../modules/api";
+import BlockAPI from "./api";
+import SelectionUtils from "../selection";
+import BlockTool from "../tools/block";
 
-import BlockTune from '../tools/tune';
-import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
-import ToolsCollection from '../tools/collection';
-import EventsDispatcher from '../utils/events';
+import BlockTune from "../tools/tune";
+import { BlockTuneData } from "../../../types/block-tunes/block-tune-data";
+import ToolsCollection from "../tools/collection";
+import EventsDispatcher from "../utils/events";
 
 /**
  * Interface describes Block class constructor argument
@@ -73,18 +73,18 @@ export enum BlockToolAPI {
    * @todo remove method in 3.0.0
    * @deprecated — use 'rendered' hook instead
    */
-  APPEND_CALLBACK = 'appendCallback',
-  RENDERED = 'rendered',
-  MOVED = 'moved',
-  UPDATED = 'updated',
-  REMOVED = 'removed',
-  ON_PASTE = 'onPaste',
+  APPEND_CALLBACK = "appendCallback",
+  RENDERED = "rendered",
+  MOVED = "moved",
+  UPDATED = "updated",
+  REMOVED = "removed",
+  ON_PASTE = "onPaste",
 }
 
 /**
  * Names of events supported by Block class
  */
-type BlockEvents = 'didMutated';
+type BlockEvents = "didMutated";
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -101,12 +101,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public static get CSS(): { [name: string]: string } {
     return {
-      wrapper: 'ce-block',
-      wrapperStretched: 'ce-block--stretched',
-      content: 'ce-block__content',
-      focused: 'ce-block--focused',
-      selected: 'ce-block--selected',
-      dropTarget: 'ce-block--drop-target',
+      wrapper: "ce-block",
+      wrapperStretched: "ce-block--stretched",
+      content: "ce-block__content",
+      focused: "ce-block--focused",
+      selected: "ce-block--selected",
+      dropTarget: "ce-block--drop-target",
     };
   }
 
@@ -202,37 +202,41 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Is fired when DOM mutation has been happened
    */
-  private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = []): void => {
-    const shouldFireUpdate = mutationsOrInputEvent instanceof InputEvent ||
-      !mutationsOrInputEvent.some(({
-        addedNodes = [],
-        removedNodes,
-      }) => {
-        return [...Array.from(addedNodes), ...Array.from(removedNodes)]
-          .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
-      });
+  private didMutated = _.debounce(
+    (mutationsOrInputEvent: MutationRecord[] | InputEvent = []): void => {
+      const shouldFireUpdate =
+        mutationsOrInputEvent instanceof InputEvent ||
+        !mutationsOrInputEvent.some(({ addedNodes = [], removedNodes }) => {
+          return [...Array.from(addedNodes), ...Array.from(removedNodes)].some(
+            (node) =>
+              $.isElement(node) &&
+              (node as HTMLElement).dataset.mutationFree === "true"
+          );
+        });
 
-    /**
-     * In case some mutation free elements are added or removed, do not trigger didMutated event
-     */
-    if (!shouldFireUpdate) {
-      return;
-    }
+      /**
+       * In case some mutation free elements are added or removed, do not trigger didMutated event
+       */
+      if (!shouldFireUpdate) {
+        return;
+      }
 
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
+      /**
+       * Drop cache
+       */
+      this.cachedInputs = [];
 
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
+      /**
+       * Update current input
+       */
+      this.updateCurrentInput();
 
-    this.call(BlockToolAPI.UPDATED);
+      this.call(BlockToolAPI.UPDATED);
 
-    this.emit('didMutated', this);
-  }, this.modificationDebounceTimer);
+      this.emit("didMutated", this);
+    },
+    this.modificationDebounceTimer
+  );
 
   /**
    * Current block API interface
@@ -324,7 +328,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {HTMLElement | Node} element - HTML Element to set as current input
    */
   public set currentInput(element: HTMLElement | Node) {
-    const index = this.inputs.findIndex((input) => input === element || input.contains(element));
+    const index = this.inputs.findIndex(
+      (input) => input === element || input.contains(element)
+    );
 
     if (index !== -1) {
       this.inputIndex = index;
@@ -427,17 +433,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * @type {string[]}
      */
     const mediaTags = [
-      'img',
-      'iframe',
-      'video',
-      'audio',
-      'source',
-      'input',
-      'textarea',
-      'twitterwidget',
+      "img",
+      "iframe",
+      "video",
+      "audio",
+      "source",
+      "input",
+      "textarea",
+      "twitterwidget",
     ];
 
-    return !!this.holder.querySelector(mediaTags.join(','));
+    return !!this.holder.querySelector(mediaTags.join(","));
   }
 
   /**
@@ -463,15 +469,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
   public set selected(state: boolean) {
-    if (state) {
-      this.holder.classList.add(Block.CSS.selected);
-
-      SelectionUtils.addFakeCursor(this.holder);
-    } else {
-      this.holder.classList.remove(Block.CSS.selected);
-
-      SelectionUtils.removeFakeCursor(this.holder);
-    }
+    return;
   }
 
   /**
@@ -516,14 +514,20 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {HTMLElement}
    */
   public get pluginsContent(): HTMLElement {
-    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
+    const blockContentNodes = this.holder.querySelector(
+      `.${Block.CSS.content}`
+    );
 
     if (blockContentNodes && blockContentNodes.childNodes.length) {
       /**
        * Editors Block content can contain different Nodes from extensions
        * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
        */
-      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
+      for (
+        let child = blockContentNodes.childNodes.length - 1;
+        child >= 0;
+        child--
+      ) {
         const contentNode = blockContentNodes.childNodes[child];
 
         if (!$.isExtensionNode(contentNode)) {
@@ -550,9 +554,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     if (_.isFunction(this.toolInstance[methodName])) {
       if (methodName === BlockToolAPI.APPEND_CALLBACK) {
         _.log(
-          '`appendCallback` hook is deprecated and will be removed in the next major release. ' +
-          'Use `rendered` hook instead',
-          'warn'
+          "`appendCallback` hook is deprecated and will be removed in the next major release. " +
+            "Use `rendered` hook instead",
+          "warn"
         );
       }
 
@@ -560,7 +564,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         // eslint-disable-next-line no-useless-call
         this.toolInstance[methodName].call(this.toolInstance, params);
       } catch (e) {
-        _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
+        _.log(`Error during '${methodName}' call: ${e.message}`, "error");
       }
     }
   }
@@ -581,22 +585,28 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {object}
    */
   public async save(): Promise<void | SavedData> {
-    const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
-    const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
+    const extractedBlock = await this.toolInstance.save(
+      this.pluginsContent as HTMLElement
+    );
+    const tunesData: { [name: string]: BlockTuneData } =
+      this.unavailableTunesData;
 
     [
       ...this.tunesInstances.entries(),
       ...this.defaultTunesInstances.entries(),
-    ]
-      .forEach(([name, tune]) => {
-        if (_.isFunction(tune.save)) {
-          try {
-            tunesData[name] = tune.save();
-          } catch (e) {
-            _.log(`Tune ${tune.constructor.name} save method throws an Error %o`, 'warn', e);
-          }
+    ].forEach(([name, tune]) => {
+      if (_.isFunction(tune.save)) {
+        try {
+          tunesData[name] = tune.save();
+        } catch (e) {
+          _.log(
+            `Tune ${tune.constructor.name} save method throws an Error %o`,
+            "warn",
+            e
+          );
         }
-      });
+      }
+    });
 
     /**
      * Measuring execution time
@@ -618,7 +628,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         };
       })
       .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+        _.log(
+          `Saving proccess for ${this.name} tool failed due to the ${error}`,
+          "log",
+          "red"
+        );
       });
   }
 
@@ -670,9 +684,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      *
      * If anchorNode is undefined, also use activeElement
      */
-    this.currentInput = $.isNativeInput(document.activeElement) || !SelectionUtils.anchorNode
-      ? document.activeElement
-      : SelectionUtils.anchorNode;
+    this.currentInput =
+      $.isNativeInput(document.activeElement) || !SelectionUtils.anchorNode
+        ? document.activeElement
+        : SelectionUtils.anchorNode;
   }
 
   /**
@@ -682,15 +697,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     /**
      * Observe DOM mutations to update Block inputs
      */
-    this.mutationObserver.observe(
-      this.holder.firstElementChild,
-      {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-      }
-    );
+    this.mutationObserver.observe(this.holder.firstElementChild, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+    });
 
     /**
      * Mutation observer doesn't track changes in "<input>" and "<textarea>"
@@ -739,7 +751,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
    * This method returns the entry that is related to the Block (depended on the Block data)
    */
-  public async getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
+  public async getActiveToolboxEntry(): Promise<
+    ToolboxConfigEntry | undefined
+  > {
     const toolboxSettings = this.tool.toolbox;
 
     /**
@@ -770,10 +784,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const toolboxItems = toolboxSettings;
 
     return toolboxItems.find((item) => {
-      return Object.entries(item.data)
-        .some(([propName, propValue]) => {
-          return blockData[propName] && _.equals(blockData[propName], propValue);
-        });
+      return Object.entries(item.data).some(([propName, propValue]) => {
+        return blockData[propName] && _.equals(blockData[propName], propValue);
+      });
     });
   }
 
@@ -783,9 +796,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {HTMLDivElement}
    */
   private compose(): HTMLDivElement {
-    const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
-        contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.toolInstance.render();
+    const wrapper = $.make("div", Block.CSS.wrapper) as HTMLDivElement,
+      contentNode = $.make("div", Block.CSS.content),
+      pluginsContent = this.toolInstance.render();
 
     contentNode.appendChild(pluginsContent);
 
@@ -800,16 +813,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     let wrappedContentNode: HTMLElement = contentNode;
 
-    [...this.tunesInstances.values(), ...this.defaultTunesInstances.values()]
-      .forEach((tune) => {
-        if (_.isFunction(tune.wrap)) {
-          try {
-            wrappedContentNode = tune.wrap(wrappedContentNode);
-          } catch (e) {
-            _.log(`Tune ${tune.constructor.name} wrap method throws an Error %o`, 'warn', e);
-          }
+    [
+      ...this.tunesInstances.values(),
+      ...this.defaultTunesInstances.values(),
+    ].forEach((tune) => {
+      if (_.isFunction(tune.wrap)) {
+        try {
+          wrappedContentNode = tune.wrap(wrappedContentNode);
+        } catch (e) {
+          _.log(
+            `Tune ${tune.constructor.name} wrap method throws an Error %o`,
+            "warn",
+            e
+          );
         }
-      });
+      }
+    });
 
     wrapper.appendChild(wrappedContentNode);
 
@@ -824,9 +843,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private composeTunes(tunesData: { [name: string]: BlockTuneData }): void {
     Array.from(this.tunes.values()).forEach((tune) => {
-      const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
+      const collection = tune.isInternal
+        ? this.defaultTunesInstances
+        : this.tunesInstances;
 
-      collection.set(tune.name, tune.create(tunesData[tune.name], this.blockAPI));
+      collection.set(
+        tune.name,
+        tune.create(tunesData[tune.name], this.blockAPI)
+      );
     });
 
     /**
@@ -852,20 +876,20 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * Update current input
      */
     this.updateCurrentInput();
-  }
+  };
 
   /**
    * Adds focus event listeners to all inputs and contentEditables
    */
   private addInputEvents(): void {
-    this.inputs.forEach(input => {
-      input.addEventListener('focus', this.handleFocus);
+    this.inputs.forEach((input) => {
+      input.addEventListener("focus", this.handleFocus);
 
       /**
        * If input is native input add oninput listener to observe changes
        */
       if ($.isNativeInput(input)) {
-        input.addEventListener('input', this.didMutated);
+        input.addEventListener("input", this.didMutated);
       }
     });
   }
@@ -874,11 +898,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * removes focus event listeners from all inputs and contentEditables
    */
   private removeInputEvents(): void {
-    this.inputs.forEach(input => {
-      input.removeEventListener('focus', this.handleFocus);
+    this.inputs.forEach((input) => {
+      input.removeEventListener("focus", this.handleFocus);
 
       if ($.isNativeInput(input)) {
-        input.removeEventListener('input', this.didMutated);
+        input.removeEventListener("input", this.didMutated);
       }
     });
   }
