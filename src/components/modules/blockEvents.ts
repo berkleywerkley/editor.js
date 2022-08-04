@@ -175,6 +175,7 @@ export default class BlockEvents extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   public handleCommandC(event: ClipboardEvent): void {
+    console.log("Handle Copy");
     event.preventDefault();
     return;
   }
@@ -185,6 +186,7 @@ export default class BlockEvents extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   public handleCommandX(event: ClipboardEvent): void {
+    console.log("Handle Cut");
     event.preventDefault();
     return;
   }
