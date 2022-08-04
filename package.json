@@ -1,7 +1,7 @@
 {
-  "name": "@editorjs/editorjs",
-  "version": "2.25.0",
-  "description": "Editor.js — Native JS, based on API and Open Source",
+  "name": "@berkleywerkley/editorjs",
+  "version": "1.0.1",
+  "description": "Editor.js — BerkleyWerkley Fork",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
   "keywords": [
